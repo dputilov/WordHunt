@@ -1,4 +1,4 @@
-package com.example.financeassistant.utils
+package com.dms.wordhunt.utils
 
 import android.view.View
 import androidx.databinding.BindingConversion

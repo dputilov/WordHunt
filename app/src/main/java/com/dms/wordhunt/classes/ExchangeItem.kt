@@ -49,10 +49,10 @@ data class ExchangeItem (
         return this.item?.let { item ->
             this.baseItem?.let { baseItem ->
                 when {
-                    item is Credit && baseItem is Credit -> item.areContentsTheSame(baseItem)
-                    item is Payment && baseItem is Payment -> item.areItemsTheSame(baseItem)
-                    item is Flat && baseItem is Flat -> item.areContentsTheSame(baseItem)
-                    item is FlatPayment && baseItem is FlatPayment -> item.areItemsTheSame(baseItem)
+//                    item is Credit && baseItem is Credit -> item.areContentsTheSame(baseItem)
+//                    item is Payment && baseItem is Payment -> item.areItemsTheSame(baseItem)
+//                    item is Flat && baseItem is Flat -> item.areContentsTheSame(baseItem)
+//                    item is FlatPayment && baseItem is FlatPayment -> item.areItemsTheSame(baseItem)
                     else -> false
                 }
             } ?: false

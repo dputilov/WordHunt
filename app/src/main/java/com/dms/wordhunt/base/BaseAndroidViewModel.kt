@@ -7,18 +7,16 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import androidx.lifecycle.AndroidViewModel
-import com.dms.wordhunt.app.FinanceAssistantApp
+import com.dms.wordhunt.app.WordHuntApplication
 import com.dms.wordhunt.classes.BROADCAST_ACTION
 import com.dms.wordhunt.classes.BROADCAST_ACTION_TYPE
 import com.dms.wordhunt.classes.BROADCAST_SEND_FROM
 import com.dms.wordhunt.classes.BroadcastActionType
 import com.dms.wordhunt.injection.component.AndroidViewModelInjector
-import com.dms.wordhunt.main_window.FinanceManager
-import com.google.gson.Gson
 
 abstract class BaseAndroidViewModel(application: Application, daggerInjectConstructorParameter: Any? = null) : AndroidViewModel(application) {
     init {
-        val appComponent = getApplication<FinanceAssistantApp>().appComponent
+        val appComponent = getApplication<WordHuntApplication>().appComponent
         AndroidViewModelInjector.inject(this, appComponent, daggerInjectConstructorParameter)
     }
 
@@ -50,11 +48,11 @@ abstract class BaseAndroidViewModel(application: Application, daggerInjectConstr
     }
 
     fun registerGroupBroadcastReceiver() {
-        getApplication<FinanceAssistantApp>().registerReceiver(groupActionBroadcastReceiver, IntentFilter(BROADCAST_ACTION))
+        getApplication<WordHuntApplication>().registerReceiver(groupActionBroadcastReceiver, IntentFilter(BROADCAST_ACTION))
     }
 
     fun unregisterGroupBroadcastReceiver() {
-        getApplication<FinanceAssistantApp>().unregisterReceiver(groupActionBroadcastReceiver)
+        getApplication<WordHuntApplication>().unregisterReceiver(groupActionBroadcastReceiver)
     }
 
     fun getModuleName() : String? {
@@ -66,7 +64,7 @@ abstract class BaseAndroidViewModel(application: Application, daggerInjectConstr
         intent.putExtra(BROADCAST_SEND_FROM, getModuleName())
         intent.putExtra(BROADCAST_ACTION_TYPE, action)
 //        intent.putExtra(BROADCAST_ENTITY, Gson().toJson(group))
-        getApplication<FinanceAssistantApp>().sendBroadcast(intent)
+        getApplication<WordHuntApplication>().sendBroadcast(intent)
     }
 
 }

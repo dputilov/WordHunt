@@ -4,11 +4,11 @@
 
   <data>
 
-    <import type="com.example.financeassistant.utils.BindingConverters" />
+    <import type="com.dms.wordhunt.utils.BindingConverters" />
 
     <variable
         name="viewModel"
-        type="com.example.financeassistant.exchange.ExchangeViewModel" />
+        type="com.dms.wordhunt.exchange.ExchangeViewModel" />
   </data>
 
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,38 +18,7 @@
     app:layoutDescription="@xml/exchange_motion"
     >
 
-  <com.google.android.material.appbar.AppBarLayout
-      android:id="@+id/exchangeAppBarListLayout"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      android:background="@color/transparent">
-
-    <androidx.appcompat.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        app:contentInsetStart="0dp"
-        app:contentInsetEnd="0dp"
-        android:background="@color/transparent"
-        app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-      <androidx.recyclerview.widget.RecyclerView
-          android:id="@+id/exchangeFilterRecyclerView"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical"
-          android:layout_marginStart="10dp"
-          />
-
-    </androidx.appcompat.widget.Toolbar>
-
-  </com.google.android.material.appbar.AppBarLayout>
-
-
   <RelativeLayout
-      app:layout_behavior="@string/appbar_scrolling_view_behavior"
       android:id="@+id/exchangeListLayout"
       android:layout_width="0dp"
       android:layout_height="0dp"
@@ -58,7 +27,7 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintHorizontal_bias="0.0"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/exchangeAppBarListLayout"
+      app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintVertical_bias="0.0"
       >
 
@@ -190,7 +159,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_gravity="bottom|end"
-          android:layout_margin="@dimen/fab_margin"
+          android:layout_margin="30dp"
           android:textColor="@color/color_text_white"
           android:backgroundTint="@color/colorAccent"
           app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlayExtended"

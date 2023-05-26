@@ -1,10 +1,8 @@
 package com.dms.wordhunt.injection.module
 
 import com.dms.wordhunt.internet.api.Api
-import com.dms.wordhunt.internet.services.credit.ApiCreditService
-import com.dms.wordhunt.internet.services.credit.ApiCreditServiceRemote
-import com.dms.wordhunt.internet.services.flat.ApiFlatService
-import com.dms.wordhunt.internet.services.flat.ApiFlatServiceRemote
+import com.dms.wordhunt.manager.credit.ApiExerciseService
+import com.dms.wordhunt.manager.credit.ApiExerciseServiceRemote
 import dagger.Module
 import dagger.Provides
 
@@ -15,9 +13,6 @@ import dagger.Provides
 class ServiceRemoteModule {
 
     @Provides
-    fun provideApiCreditService(api: Api): ApiCreditService = ApiCreditServiceRemote(api)
-
-    @Provides
-    fun provideApiFlatService(api: Api): ApiFlatService = ApiFlatServiceRemote(api)
+    fun provideApiCreditService(api: Api): ApiExerciseService = ApiExerciseServiceRemote(api)
 
 }

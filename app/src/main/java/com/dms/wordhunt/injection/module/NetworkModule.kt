@@ -1,23 +1,14 @@
 package com.dms.wordhunt.injection.module
 
 import android.content.Context
-import android.util.Log
 import com.arenberg.eye.data.encryptor.EncryptedStorageFabric
 import com.arkub.unified.api.apicoordinator.EncryptedStorage
-import com.dms.wordhunt.classes.Credit
-import com.dms.wordhunt.classes.Flat
 import com.dms.wordhunt.classes.SERVER_URL
 import com.dms.wordhunt.classes.ServerResponse
 import com.dms.wordhunt.internet.api.Api
 import com.dms.wordhunt.internet.api.AuthInterceptor
 import com.dms.wordhunt.internet.api.RetrofitErrorInterceptorConstructor
 import com.dms.wordhunt.internet.api.RxErrorHandlingCallAdapterFactory
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonObject
-import com.google.gson.JsonParseException
-import com.google.gson.JsonSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
@@ -141,7 +132,7 @@ class NetworkModule {
     @Provides
     @Reusable
     internal fun provideConverterFactory(): Converter.Factory {
-        return GsonConverterFactory.create(GsonBuilder().withCustomAdapters().create())
+        return GsonConverterFactory.create()
     }
 
     /**
@@ -154,31 +145,4 @@ class NetworkModule {
         return RxErrorHandlingCallAdapterFactory.create()
     }
 
-    //TODO For Test Sealed Class [ServerResponse]
-    private fun GsonBuilder.withCustomAdapters() = apply {
-        registerTypeAdapter(
-            ServerResponse::class.java,
-            JsonSerializer<ServerResponse> { src, _, context ->
-                when (src) {
-                    is Credit ->
-                        context.serialize(src, Credit::class.java)
-                    is Flat ->
-                        context.serialize(src, Flat::class.java)
-                }
-            })
-        .registerTypeAdapter(
-            ServerResponse::class.java,
-            JsonDeserializer<ServerResponse> { jsonElement , _, context->
-                val jsonObject = jsonElement.asJsonObject
-                try {
-                    if (jsonObject["Address"] != null) {
-                        context.deserialize<Flat>(jsonElement, Flat::class.java)
-                    } else {
-                        context.deserialize<Credit>(jsonElement, Credit::class.java)
-                    }
-                } catch (e: Exception) {
-                    throw JsonParseException(e)
-                }
-            })
-    }
 }

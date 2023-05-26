@@ -107,23 +107,23 @@ class ExchangeViewHolder constructor(binding: ExchangeItemBinding, val context: 
 
         statusTextView.text = ""
 
-        when (item.status) {
-            ExchangeItemStatus.New -> {
-                statusTextView.text = "NEW"
-                statusTextView.setTextColor(ContextCompat.getColor(context, R.color.orange_color))
-            }
-            ExchangeItemStatus.Update -> {
-                statusTextView.text = "UPDATE"
-                statusTextView.setTextColor(ContextCompat.getColor(context, R.color.blue_color))
-            }
-            ExchangeItemStatus.Delete -> {
-                statusTextView.text = "DELETE"
-                statusTextView.setTextColor(ContextCompat.getColor(context, R.color.red_color))
-            }
-            else -> {
-                statusTextView.gone()
-            }
-        }
+//        when (item.status) {
+//            ExchangeItemStatus.New -> {
+//                statusTextView.text = "NEW"
+//                statusTextView.setTextColor(ContextCompat.getColor(context, R.color.orange_color))
+//            }
+//            ExchangeItemStatus.Update -> {
+//                statusTextView.text = "UPDATE"
+//                statusTextView.setTextColor(ContextCompat.getColor(context, R.color.blue_color))
+//            }
+//            ExchangeItemStatus.Delete -> {
+//                statusTextView.text = "DELETE"
+//                statusTextView.setTextColor(ContextCompat.getColor(context, R.color.red_color))
+//            }
+//            else -> {
+//                statusTextView.gone()
+//            }
+//        }
 
     }
 }

@@ -44,6 +44,8 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:textColor="@color/color_text"
+        android:maxLines="1000"
+        android:minLines="10"
         tools:text="Ипотека №1 от 01.01.001"
         />
 

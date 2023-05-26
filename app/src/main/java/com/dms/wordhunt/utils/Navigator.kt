@@ -2,21 +2,8 @@ package com.dms.wordhunt.utils
 
 import android.app.Activity
 import android.content.Intent
-import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.dms.wordhunt.classes.*
-import com.dms.wordhunt.credit.CreditItemActivity
-import com.dms.wordhunt.diagram.CreditDiagramActivity
-import com.dms.wordhunt.exchange.ExchangeActivity
-import com.dms.wordhunt.flat.FlatActivity
-import com.dms.wordhunt.flat.mainPage.FlatMainFragment
-import com.dms.wordhunt.graphic.GraphicItemActivity
-import com.dms.wordhunt.flatPayment.FlatPaymentActivity
-import com.dms.wordhunt.graphic.GraphicListActivity
-import com.dms.wordhunt.payment.PaymentActivity
-import com.dms.wordhunt.settings.SettingsActivity
-import com.dms.wordhunt.task.TaskItemActivity
 import com.google.gson.Gson
 
 enum class NavigatorResultCode (val resultCode: Int) {

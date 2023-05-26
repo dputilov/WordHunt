@@ -7,12 +7,7 @@ import com.dms.wordhunt.base.BaseAndroidViewModel
 import com.dms.wordhunt.classes.BroadcastActionType
 import com.dms.wordhunt.classes.ExchangeFilterItem
 import com.dms.wordhunt.classes.ExchangeItem
-import com.dms.wordhunt.classes.ExchangeItemType
-import com.dms.wordhunt.useCase.assembly.CreateExchangeFilterItemsUseCase
-import com.dms.wordhunt.useCase.services.ExchangeApplyUseCase
-import com.dms.wordhunt.useCase.services.ExchangeCreditUseCase
-import com.dms.wordhunt.useCase.services.ExchangeFlatUseCase
-import com.dms.wordhunt.useCase.services.ExchangeLoadAllUseCase
+import com.dms.wordhunt.useCase.services.LoadExerciseUseCase
 import com.dms.wordhunt.utils.SingleLiveEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -26,19 +21,7 @@ import javax.inject.Inject
 class ExchangeViewModel(application: Application): BaseAndroidViewModel(application) {
 
     @Inject
-    lateinit var exchangeLoadAllUseCase: dagger.Lazy<ExchangeLoadAllUseCase>
-
-    @Inject
-    lateinit var exchangeCreditUseCase: dagger.Lazy<ExchangeCreditUseCase>
-
-    @Inject
-    lateinit var exchangeFlatUseCase: dagger.Lazy<ExchangeFlatUseCase>
-
-    @Inject
-    lateinit var exchangeApplyUseCase: dagger.Lazy<ExchangeApplyUseCase>
-
-    @Inject
-    lateinit var createExchangeFilterItemsUseCase: CreateExchangeFilterItemsUseCase
+    lateinit var LOadExerciseUseCase: dagger.Lazy<LoadExerciseUseCase>
 
     private var exchangeApplySubscription: Disposable? = null
     private var exchangeCreditSubscription: Disposable? = null
@@ -70,7 +53,6 @@ class ExchangeViewModel(application: Application): BaseAndroidViewModel(applicat
         onlyUpdated.value = true
         registerGroupBroadcastReceiver()
 
-        createExchangeFilterItems()
     }
 
     override fun onCleared() {
@@ -100,50 +82,9 @@ class ExchangeViewModel(application: Application): BaseAndroidViewModel(applicat
         return currentApplyProgress.value ?: 0
     }
 
-    // Create filter items list
-    private fun createExchangeFilterItems(){
-        exchangeFilterItemList.value = createExchangeFilterItemsUseCase.createExchangeFilterItems()
-    }
-
     fun onStartClick() {
-        startExchange(null)
+        exchangeAll()
     }
-
-    fun startExchange(type : ExchangeItemType?) {
-        resultText.value = ""
-        exchangeItemList.value = null
-        when(type) {
-            ExchangeItemType.Credit -> {
-                exchangeCredit()
-            }
-            ExchangeItemType.CreditPayment -> {
-                exchangeCreditPayment()
-            }
-            ExchangeItemType.CreditGraphic -> {
-                exchangeCreditGraphic()
-            }
-            ExchangeItemType.Flat -> {
-                exchangeFlat()
-            }
-            ExchangeItemType.FlatPayment -> {
-                exchangeFlatPayment()
-            }
-            null -> {
-                exchangeAll()
-            }
-            else -> {
-
-            }
-        }
-    }
-
-    fun cancelApply() {
-        exchangeApplySubscription?.dispose()
-        exchangeApplyUseCase.get().cancel()
-
-        stopExchangeProcess()
-    }
-
     private fun getProgressPercent(progress: Int): String {
         val percent = maxApplyProgress.value?.let { max ->
             if (max != 0) {
@@ -155,83 +96,26 @@ class ExchangeViewModel(application: Application): BaseAndroidViewModel(applicat
         return "${percent}%"
     }
 
-    private fun initProgressBar() {
-        applyProgressBarVisibility.value = true
-        maxApplyProgress.value = exchangeItemList.value?.size
-        currentApplyProgress.value = 0
-        exchangeApplyProgressBarText.value = ""
-        exchangeApplyProgressBarPercentText.value = getProgressPercent(0)
-    }
+    private fun exchangeAll() {
+        exchangeAllSubscription?.dispose()
 
-    fun applyExchange(){
-        cancelApply()
-
-        exchangeItemList.value?.let { exchangeItemList ->
-
-            exchangeApplySubscription = exchangeApplyUseCase.get().exchangeSubject
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { onApplyExchangeStart() }
-                .doOnNext {item: ExchangeItem -> onApplyExchangeNext(item) }
-                .doOnComplete { onApplyExchangeComplete() }
-                .subscribe(
-                    { _ -> onApplyExchangeSuccess() },
-                    { error: Throwable -> onApplyExchangeError(error) }
-                )
-
-            exchangeApplyUseCase.get().applyExchange(exchangeItemList)
-
-        }
-
-    }
-
-    private fun onApplyExchangeStart() {
-        initProgressBar()
-    }
-
-    private fun onApplyExchangeNext(item: ExchangeItem) {
-        val progress = getCurrentApplyProgress() + 1
-
-        currentApplyProgress.value = progress
-        currentApplySecondaryProgress.value = progress + 5
-        exchangeApplyProgressBarPercentText.value = getProgressPercent(progress)
-        exchangeApplyProgressBarText.value = item.type.name
-    }
-
-    private fun onApplyExchangeComplete() {
-        applyProgressBarVisibility.value = false
-
-        checkExchangeList()
-
-        sendGroupBroadcastMessage(BroadcastActionType.Exchange)
-    }
-
-    private fun onApplyExchangeSuccess() {
-    }
-
-    private fun onApplyExchangeError(error: Throwable) {
-    }
-
-    private fun startExchangeProcess() {
-        obtainingDataInProgress.value = true
-    }
-    
-    private fun stopExchangeProcess() {
-        obtainingDataInProgress.value = false
-    }
-
-    private fun exchangeCredit() {
-        exchangeCreditSubscription?.dispose()
-
-        exchangeCreditSubscription = exchangeCreditUseCase.get().loadCredits()
+        exchangeAllSubscription = LOadExerciseUseCase.get().loadExercise()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe{ startExchangeProcess() }
-            .doOnComplete{ stopExchangeProcess() }
+            .doOnSubscribe{ onStartExchangeProcess() }
+            .doOnComplete{ onStopExchangeProcess() }
             .subscribe(
                 { data -> onExchangeSuccess(data) },
                 { error: Throwable -> onExchangeFail(error) }
             )
+    }
+
+    private fun onStartExchangeProcess() {
+        obtainingDataInProgress.value = true
+    }
+
+    private fun onStopExchangeProcess() {
+        obtainingDataInProgress.value = false
     }
 
     private fun onExchangeSuccess(data: List<ExchangeItem>) {
@@ -265,79 +149,8 @@ class ExchangeViewModel(application: Application): BaseAndroidViewModel(applicat
 
     private fun onExchangeFail(error: Throwable) {
         exchangeItemList.value = listOf()
-        stopExchangeProcess()
+        onStopExchangeProcess()
         resultText.value = "http error = $error";
         Log.d("DMS_NETWORK", "http error = $error")
     }
-
-    private fun exchangeCreditPayment() {
-        exchangeCreditPaymentsSubscription?.dispose()
-
-        exchangeCreditPaymentsSubscription = exchangeCreditUseCase.get().loadCreditPayments()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe{ startExchangeProcess() }
-            .doOnComplete{ stopExchangeProcess() }
-            .subscribe(
-                { data -> onExchangeSuccess(data) },
-                { error: Throwable -> onExchangeFail(error) }
-            )
-    }
-
-    private fun exchangeCreditGraphic() {
-        exchangeCreditPGraphicsSubscription?.dispose()
-
-        exchangeCreditPGraphicsSubscription = exchangeCreditUseCase.get().loadCreditGraphic()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe{ startExchangeProcess() }
-            .doOnComplete{ stopExchangeProcess() }
-            .subscribe(
-                { data -> onExchangeSuccess(data) },
-                { error: Throwable -> onExchangeFail(error) }
-            )
-    }
-
-    private fun exchangeFlat() {
-        exchangeFlatSubscription?.dispose()
-
-        exchangeFlatSubscription = exchangeFlatUseCase.get().loadFlats()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe{ startExchangeProcess() }
-            .doOnComplete{ stopExchangeProcess() }
-            .subscribe(
-                { data -> onExchangeSuccess(data) },
-                { error: Throwable -> onExchangeFail(error) }
-            )
-    }
-
-    private fun exchangeFlatPayment() {
-        exchangeFlatPaymentsSubscription?.dispose()
-
-        exchangeFlatPaymentsSubscription = exchangeFlatUseCase.get().loadFlatPayments()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe{ startExchangeProcess() }
-            .doOnComplete{ stopExchangeProcess() }
-            .subscribe(
-                { data -> onExchangeSuccess(data) },
-                { error: Throwable -> onExchangeFail(error) }
-            )
-    }
-
-    private fun exchangeAll() {
-        exchangeAllSubscription?.dispose()
-
-        exchangeAllSubscription = exchangeLoadAllUseCase.get().loadAll()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe{ startExchangeProcess() }
-            .doOnComplete{ stopExchangeProcess() }
-            .subscribe(
-                { data -> onExchangeSuccess(data) },
-                { error: Throwable -> onExchangeFail(error) }
-            )
-    }
-
 }

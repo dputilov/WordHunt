@@ -3,7 +3,9 @@ package com.dms.wordhunt.classes
 
 const val ARGUMENT_PAGE_NUMBER = "ARGUMENT_PAGE_NUMBER"
 const val SWIPE_REFRESH_DISTANCE_TO_TRIGGER = 300
-const val SERVER_URL = "http://94.181.95.17:9000/BaseOfJobs/hs/"
+//const val SERVER_URL = "http://94.181.95.17:9000/BaseOfJobs/hs/"
+
+const val SERVER_URL = "https://wooordhunt.ru/"
 
 const val BROADCAST_ACTION = "BROADCAST_ACTION"
 const val BROADCAST_SEND_FROM = "BROADCAST_SEND_FROM"

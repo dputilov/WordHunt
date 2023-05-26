@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
-import com.dms.wordhunt.app.FinanceAssistantApp
+import com.dms.wordhunt.app.WordHuntApplication
 import com.dms.wordhunt.injection.component.AppComponent
 import java.lang.Deprecated
 
@@ -20,7 +20,7 @@ abstract class BaseActivity : AppCompatActivity() {
      * @return [ApplicationComponent]
      */
     protected val appComponent: AppComponent
-        get() = (application as FinanceAssistantApp).appComponent
+        get() = (application as WordHuntApplication).appComponent
 
 
 }
@@ -33,7 +33,7 @@ abstract class ViewBindingActivity<ViewBindingType : ViewBinding> : AppCompatAct
      * @return [ApplicationComponent]
      */
     protected val appComponent: AppComponent
-        get() = (application as FinanceAssistantApp).appComponent
+        get() = (application as WordHuntApplication).appComponent
 
     private var _binding: ViewBinding? = null
     abstract val bindingInflater: (LayoutInflater) -> ViewBindingType
